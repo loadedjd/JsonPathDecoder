@@ -1,0 +1,14 @@
+{
+  "name": "jsondotpath",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Jared Williams",
+  "license": "ISC",
+  "dependencies": {
+    "regex": "^0.1.1"
+  }
+}
