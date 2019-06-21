@@ -1,5 +1,7 @@
-import { JSONPathDecoder } from './JSONPathDecoder';
-let testObject = {
+"use strict";
+exports.__esModule = true;
+var JSONPathDecoder_1 = require("./JSONPathDecoder");
+var testObject = {
     "name": "Jared",
     "age": 21,
     "account": {
@@ -21,12 +23,11 @@ let testObject = {
             },
             {
                 "name": "Larry",
-                "config" : {
-                    "foods" : ["apples", "oranges"]
+                "config": {
+                    "foods": ["apples", "oranges"]
                 }
-            }]
+            }
+        ]
     }
-}
-
-console.log(JSONPathDecoder.decode(testObject, 'account.aliases.name'));
-
+};
+console.log(JSONPathDecoder_1.JSONPathDecoder.decode(testObject, 'account.aliases.config.foods.0'));

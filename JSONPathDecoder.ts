@@ -1,34 +1,71 @@
+import { Regex } from 'regex';
+import { Tokenizer } from './Tokenizer';
+import { TokenType } from './types/TokenType.enum';
 import * as regex from 'regex';
+
 export class JSONPathDecoder {
-  public static decode(object: any, path: string) {
-    const props = path.split(".");
+  public static decode(object: any, path: string): any {
+    let tokenizer = new Tokenizer(path);
     let runningObject = object;
 
-    try {
-      props.forEach(prop => {
-        runningObject = JSONPathDecoder.parseProperty(prop, runningObject);
-      });
-    } catch {
-      return undefined;
-    }
+    tokenizer.tokens.reverse().forEach(token => {
+      let tokenPath = token.value;
+      let tokenType = token.type;
+      try {
+        if (tokenType == TokenType.String) { // Normal
+          runningObject = JSONPathDecoder.solveString(tokenPath, runningObject);
+        } else if (tokenType == TokenType.Number) { // Array
+            runningObject = JSONPathDecoder.solveNumber(tokenPath, runningObject);
+        } else {
+            runningObject = JSONPathDecoder.solveRegex(tokenPath, runningObject);
+        }
+      } catch (e){
+        console.log(e);
+        return undefined;
+      }
+    });
 
     return runningObject;
   }
 
-  private static parseProperty(prop: string, object): Array<any> {
-      if (prop.startsWith('/') && prop.endsWith('/')) {
-        const property = prop.replace('/', '');
-        const keys = Object.keys(object);
+  private static solveRegex(reg: string, runningObject: object): any[] {
+    var rege = new RegExp(`${reg}`);
+    var returnArray = [];
+    
+    (runningObject as Array<any>).forEach(item => {
+      Object.keys(item).forEach(key => {
+        if (rege.test(key)) {
+          returnArray.push(item[key]);
+        }
+      });
+    });
 
-        keys.forEach(key => {
+    return returnArray;
+  }
 
-        });
+  private static solveString(path: string, runningObject: object): any[] {
+    var returnOject = [];
+    if (Array.isArray(runningObject)) {
+      (runningObject as Array<any>).forEach(item => {
+        returnOject.push(item[path]);
+      });
+    } else {
+      returnOject.push(runningObject[path]);
+    }
 
+    return returnOject;
+  }
 
-      } else if (prop.startsWith('/') || prop.endsWith('/')) {
-          // Error invalid syntax
-      } else {
-        return object[prop];
-      }
+  private static solveNumber(path: string, runningObject: object): any[] {
+    var returnOject = [];
+    if (Array.isArray(runningObject)) {
+      (runningObject as Array<any>).forEach(item => {
+        returnOject.push(runningObject[path]);
+      });
+    } else {
+      returnOject.push(runningObject[path]);
+    }
+
+    return returnOject;
   }
 }
