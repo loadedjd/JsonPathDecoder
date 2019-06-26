@@ -28,5 +28,6 @@ let testObject = {
     }
 }
 
-console.log(JSONPathDecoder.decode(testObject, 'account.aliases.name'));
+let returnValue = JSONPathDecoder.decode(testObject, 'account.email');
+console.log(returnValue);
 

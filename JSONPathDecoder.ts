@@ -1,71 +1,53 @@
-import { Regex } from 'regex';
-import { Tokenizer } from './Tokenizer';
-import { TokenType } from './types/TokenType.enum';
-import * as regex from 'regex';
+import { Regex } from "regex";
+import { Tokenizer } from "./Tokenizer";
+import { TokenType } from "./types/TokenType.enum";
+import { Token } from "./types/Token.type";
 
 export class JSONPathDecoder {
   public static decode(object: any, path: string): any {
     let tokenizer = new Tokenizer(path);
+    return JSONPathDecoder.parse(tokenizer.tokens, object);
+  }
+
+  private static parse(tokens: Token[], object: object): any {
+    const token = tokens.pop();
     let runningObject = object;
 
-    tokenizer.tokens.reverse().forEach(token => {
-      let tokenPath = token.value;
-      let tokenType = token.type;
-      try {
-        if (tokenType == TokenType.String) { // Normal
-          runningObject = JSONPathDecoder.solveString(tokenPath, runningObject);
-        } else if (tokenType == TokenType.Number) { // Array
-            runningObject = JSONPathDecoder.solveNumber(tokenPath, runningObject);
+
+    if (token && token.type === TokenType.String) {
+      if (Array.isArray(object)) {
+        var tempArray = new Array<any>();
+        (object as Array<any>).forEach(item => {
+          tempArray.push(this.parse(tokens, item));
+        });
+
+        runningObject = tempArray;
+      } else {
+        if (tokens.length > 0) {
+          runningObject = JSONPathDecoder.parse(tokens, object[token.value]);
         } else {
-            runningObject = JSONPathDecoder.solveRegex(tokenPath, runningObject);
+          runningObject = object[token.value];
         }
-      } catch (e){
-        console.log(e);
-        return undefined;
       }
-    });
+    } else if (token && token.type === TokenType.Number) {
+      if (Array.isArray(object)) {
+        runningObject = this.parse(tokens, object[+token.value]);
+      } else return undefined;
+    } else if (token && token.type === TokenType.Regex) {
+      let tempArray = new Array<any>();
+      let keys = Object.keys(object);
+      let regex = new RegExp(token.value);
+
+      keys.forEach(key => {
+        if (regex.test(key)) {
+          tempArray.push(object[key]);
+        }
+      });
+
+      runningObject = tempArray;
+      JSONPathDecoder.parse(tokens, runningObject);
+    }
 
     return runningObject;
-  }
-
-  private static solveRegex(reg: string, runningObject: object): any[] {
-    var rege = new RegExp(`${reg}`);
-    var returnArray = [];
-    
-    (runningObject as Array<any>).forEach(item => {
-      Object.keys(item).forEach(key => {
-        if (rege.test(key)) {
-          returnArray.push(item[key]);
-        }
-      });
-    });
-
-    return returnArray;
-  }
-
-  private static solveString(path: string, runningObject: object): any[] {
-    var returnOject = [];
-    if (Array.isArray(runningObject)) {
-      (runningObject as Array<any>).forEach(item => {
-        returnOject.push(item[path]);
-      });
-    } else {
-      returnOject.push(runningObject[path]);
-    }
-
-    return returnOject;
-  }
-
-  private static solveNumber(path: string, runningObject: object): any[] {
-    var returnOject = [];
-    if (Array.isArray(runningObject)) {
-      (runningObject as Array<any>).forEach(item => {
-        returnOject.push(runningObject[path]);
-      });
-    } else {
-      returnOject.push(runningObject[path]);
-    }
-
-    return returnOject;
   }
 }
