@@ -5,6 +5,7 @@ JSONPathDecoder is a library designed to help you easily parse lengthy json conf
 
 ```
 npm i jsonpathdeocder
+const jpd = require('jsonpathdecoder');
 ```
 
 ## Normal Usage
