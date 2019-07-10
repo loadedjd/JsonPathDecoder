@@ -53,3 +53,5 @@ export class JSONPathDecoder {
     return runningObject;
   }
 }
+
+module.exports = JSONPathDecoder;
