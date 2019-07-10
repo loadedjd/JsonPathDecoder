@@ -14,7 +14,8 @@ function readConfigFile() {
     return __awaiter(this, void 0, void 0, function* () {
         fs.readFile('./test.json', (err, data) => {
             if (!err && data) {
-                let returnValue = JSONPathDecoder_1.JSONPathDecoder.decode(JSON.parse(data), 'solver_settings.model_import_settings.input_type');
+                let json = JSON.parse(data);
+                let returnValue = JSONPathDecoder_1.JSONPathDecoder.decode(json, 'solver_settings.model_import_settings.input_type');
                 console.log(returnValue);
             }
         });

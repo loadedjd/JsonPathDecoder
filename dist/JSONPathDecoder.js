@@ -52,3 +52,4 @@ class JSONPathDecoder {
     }
 }
 exports.JSONPathDecoder = JSONPathDecoder;
+module.exports = JSONPathDecoder;
