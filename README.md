@@ -5,11 +5,11 @@ JSONPathDecoder is a library designed to help you easily parse lengthy json conf
 
 ```
 npm i jsonpathdeocder
-const jpd = require('jsonpathdecoder');
 ```
 
 ## Normal Usage
 ```
+const jpd = require('jsonpathdecoder');
 let testObject = {
     "accounts" : [
         {
@@ -24,7 +24,7 @@ let testObject = {
     ]
 }
 
-let returnValue = JSONPathDecoder.decode(testObject,'accounts.name');
+let returnValue = jpd.decode(testObject,'accounts.name');
 
 // OUTPUT: ["Jared", "Archie"]
 ```
@@ -32,6 +32,7 @@ let returnValue = JSONPathDecoder.decode(testObject,'accounts.name');
 ## Array Usage
 
 ```
+const jpd = require('jsonpathdecoder');
 let testObject = {
     "accounts" : [
         {
@@ -46,7 +47,7 @@ let testObject = {
     ]
 }
 
-let returnValue = JSONPathDecoder.decode(testObject,'accounts.[0]');
+let returnValue = jpd.decode(testObject,'accounts.0');
 
 // OUTPUT: {
                 "name" : "Jared",
@@ -58,6 +59,7 @@ let returnValue = JSONPathDecoder.decode(testObject,'accounts.[0]');
 ## Regex Usage
 
 ```
+const jpd = require('jsonpathdecoder');
 let testObject = {
     "accounts" : [
         {
@@ -72,7 +74,7 @@ let testObject = {
     ]
 }
 
-let returnValue = JSONPathDecoder.decode(testObject,'accounts./n.*/');
+let returnValue = jpd.decode(testObject,'accounts./n.*/');
 
 // OUTPUT: ["Jared", "Archie"]
 ```
