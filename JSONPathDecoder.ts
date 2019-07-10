@@ -13,12 +13,14 @@ export class JSONPathDecoder {
     const token = tokens.pop();
     let runningObject = object;
 
-
     if (token && token.type === TokenType.String) {
       if (Array.isArray(object)) {
+        
         var tempArray = new Array<any>();
         (object as Array<any>).forEach(item => {
-          tempArray.push(this.parse(tokens, item));
+          const tokensCopy = [...tokens];
+          tokensCopy.push(token);
+          tempArray.push(this.parse(tokensCopy, item));
         });
 
         runningObject = tempArray;

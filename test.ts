@@ -28,6 +28,5 @@ let testObject = {
     }
 }
 
-let returnValue = JSONPathDecoder.decode(testObject, 'account.email');
+let returnValue = JSONPathDecoder.decode(testObject, 'account./p.*/');
 console.log(returnValue);
-
